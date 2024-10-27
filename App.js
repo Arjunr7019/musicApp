@@ -4,6 +4,7 @@ import { AuthContext } from './App/Context/AuthContext';
 import { useEffect, useState } from 'react';
 import Home from './App/Pages/Home';
 import Services from './App/Shared/Services';
+import Navigation from './StackNavigator';
 
 export default function App() {
   const [userData, setUserData] = useState()
@@ -15,10 +16,10 @@ export default function App() {
   }, [])
 
   return (
-    <View>
+    <>
       <AuthContext.Provider value={{ userData, setUserData }}>
-        {userData?<Home />:<Login/>}
+        {userData?<Navigation/>:<Login/>}
       </AuthContext.Provider>
-    </View>
+    </>
   );
 }
