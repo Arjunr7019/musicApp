@@ -5,6 +5,8 @@ import PlayListLibrary from "./App/Pages/PlayListLibrary";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { NavigationContainer } from "@react-navigation/native";
+// import Ionicons from '@expo/vector-icons/Ionicons';
+import ProfilePage from "./App/Pages/ProfilePage";
 
 const Tab = createBottomTabNavigator();
 
@@ -33,11 +35,13 @@ function BottomTabs() {
                 }}
             />
             <Tab.Screen
-                name="PlayListLibrary"
+                name="Library"
                 component={PlayListLibrary}
                 options={{
                     tabBarLabel: "Library",
-                    headerShown: false,
+                    headerShown: true,
+                    headerTitleAlign:"center",
+                    // headerLeft: ()=> <Ionicons name="arrow-back" size={30} color="black" />,
                     tabBarIcon: ({ focused }) =>
                         focused ?
                             (
@@ -60,6 +64,7 @@ function Navigation(){
         <NavigationContainer>
             <Stack.Navigator>
                 <Stack.Screen name="Main" component={BottomTabs} options={{headerShown:false}}/>
+                <Stack.Screen name="Profile" component={ProfilePage} options={{headerShown:true}}/>
             </Stack.Navigator>
         </NavigationContainer>
     )

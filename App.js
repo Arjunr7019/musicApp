@@ -2,7 +2,6 @@ import { StyleSheet, Text, View } from 'react-native';
 import Login from './App/Pages/Login';
 import { AuthContext } from './App/Context/AuthContext';
 import { useEffect, useState } from 'react';
-import Home from './App/Pages/Home';
 import Services from './App/Shared/Services';
 import Navigation from './StackNavigator';
 
