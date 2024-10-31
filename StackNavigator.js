@@ -12,12 +12,15 @@ import { useContext } from "react";
 import { ModalVisibility } from "./App/Context/ModalVisibility";
 import { BottomModal } from "react-native-modals";
 import { ModalContent } from "react-native-modals";
-import { Pressable } from "react-native";
+import { Pressable, View, Text, StyleSheet, Image } from "react-native";
 import Entypo from '@expo/vector-icons/Entypo';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const Tab = createBottomTabNavigator();
 
 function BottomTabs() {
+    const progress = 0.5;
 
     const { modalVisible, setModalVisible } = useContext(ModalVisibility)
     return (
@@ -67,11 +70,64 @@ function BottomTabs() {
             </Tab.Navigator>
             <FloatingCurrentMusic />
             <BottomModal
-                visible={modalVisible} onHardwareBackPress={() => setModalVisible(false)} swipeDirection={["up", "down"]} swipeThreshold={200}>
+                visible={modalVisible} onSwipeOut={() => setModalVisible(false)} swipeDirection={["up", "down"]} swipeThreshold={200}>
                 <ModalContent style={{ height: "100%", width: "100%" }}>
-                    <Pressable style={{ padding: 10,backgroundColor:"#e0e0e0", borderRadius:10 }} onPress={() => setModalVisible(false)}>
-                        <Entypo name="chevron-down" size={24} color="black" />
-                    </Pressable>
+                    <View style={style.currentMusicScreen}>
+                        <Pressable style={style.PressableIcon} onPress={() => setModalVisible(false)}>
+                            <Entypo name="chevron-down" size={24} color="black" />
+                        </Pressable>
+                        {/* <View style={{ marginVertical: "auto" }}>
+                            <Text style={{ fontSize: 20, fontWeight:"bold" }}>CurrentSong</Text>
+                        </View> */}
+                        <View style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "row" }}>
+                            <Pressable style={style.PressableIcon}>
+                                <Entypo name="share" size={24} color="black" />
+                            </Pressable>
+                            <Pressable style={style.PressableIcon}>
+                                <Entypo name="dots-three-vertical" size={24} color="black" />
+                            </Pressable>
+                        </View>
+                    </View>
+                    <View style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection: "column", height: "90%", paddingTop: 10 }}>
+                        <View style={{ width: "100%" }}>
+                            <Image style={{ width: 350, height: 350, borderRadius: 10 }} source={require('./App/Assets/Img/songBanner.png')} />
+                            <Text style={{ textAlign: "center", fontSize: 30, fontWeight: "bold" }}>Song Name</Text>
+                            <Text style={{ textAlign: "center", fontWeight: "bold" }}>Artist Name</Text>
+                        </View>
+                        <View style={{ width: "100%" }}>
+                            <View>
+                                <View style={{ width: "100%", marginTop: 10, height: 3, backgroundColor: "gray", borderRadius: 5 }}>
+                                    <View style={[style.progressBar, { width: `${progress * 100}%` }]} />
+                                    <View style={[style.progressCircle, { left: `${progress * 100}%`, marginLeft: -12 / 2 }]} />
+                                </View>
+                            </View>
+                            <View style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection: "row", paddingVertical: 5 }}>
+                                <Text style={{ fontWeight: "bold" }}>00:00</Text>
+                                <Text style={{ fontWeight: "bold" }}>03:00</Text>
+                            </View>
+                        </View>
+                        <View style={{ width: "100%", display: "flex", justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", }}>
+                            <Pressable>
+                                <FontAwesome5 style={{ paddingHorizontal: 10 }} name="step-backward" size={30} color="black" />
+                            </Pressable>
+                            <Pressable>
+                                <View style={{ display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "black", padding: 30, borderRadius: 80 }}>
+                                    <FontAwesome5 name="play" size={30} color="white" />
+                                </View>
+                            </Pressable>
+                            <Pressable>
+                                <FontAwesome5 style={{ paddingHorizontal: 10 }} name="step-forward" size={30} color="black" />
+                            </Pressable>
+                        </View>
+                        <View style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection: "row", }}>
+                            <Pressable>
+                                <Ionicons style={{ paddingHorizontal: 10 }} name="heart-outline" size={30} color="black" />
+                            </Pressable>
+                            <Pressable>
+                                <Ionicons style={{ paddingHorizontal: 10 }} name="download-outline" size={30} color="black" />
+                            </Pressable>
+                        </View>
+                    </View>
                 </ModalContent>
             </BottomModal>
         </>
@@ -90,5 +146,30 @@ function Navigation() {
         </NavigationContainer>
     )
 }
+
+const style = StyleSheet.create({
+    currentMusicScreen: {
+        display: "flex",
+        justifyContent: "space-between",
+        flexDirection: "row",
+        marginTop: 12
+    },
+    PressableIcon: {
+        padding: 10,
+        borderRadius: 10,
+    },
+    progressBar: {
+        height: "100%",
+        backgroundColor: "#FFADA2"
+    },
+    progressCircle: {
+        position: "absolute",
+        top: -5,
+        width: 12,
+        height: 12,
+        borderRadius: 12 / 2,
+        backgroundColor: "#FFADA2"
+    }
+})
 
 export default Navigation

@@ -13,7 +13,7 @@ export default function FloatingCurrentMusic() {
   return (
     <TouchableOpacity onPress={()=> {setModalVisible(true)}} style={style.floatingPlayer}>
       <View style={style.musicImage}>
-        <Image style={{ width: "90%", height: "90%" }} source={require('../Assets/Img/music-wellcome.png')} ></Image>
+        <Image style={{ width: "100%", height: "100%", borderRadius:10 }} source={require('../Assets/Img/songBanner.png')} ></Image>
       </View>
       <View style={style.musicNameIcons}>
         <View>
@@ -45,8 +45,6 @@ const style = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    padding: 4,
-    backgroundColor: "black",
     width: 60,
     height: 60,
     borderRadius: 10,
