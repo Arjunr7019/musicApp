@@ -1,6 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "./App/Pages/Home";
+import SearchArea from "./App/Components/SearchArea";
 import PlayListLibrary from "./App/Pages/PlayListLibrary";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -45,6 +46,23 @@ function BottomTabs() {
                                 :
                                 (
                                     <AntDesign name="home" size={30} color="black" />
+                                )
+                    }}
+                />
+                <Tab.Screen
+                    name="Search"
+                    component={SearchArea}
+                    options={{
+                        tabBarLabel: "Search",
+                        headerShown: false,
+                        tabBarIcon: ({ focused }) =>
+                            focused ?
+                                (
+                                    <AntDesign name="search1" size={30} color="#FFAAA2" />
+                                )
+                                :
+                                (
+                                    <AntDesign name="search1" size={30} color="black" />
                                 )
                     }}
                 />

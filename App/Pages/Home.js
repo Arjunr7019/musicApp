@@ -3,11 +3,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../Context/AuthContext';
 import WelcomeHeader from '../Components/WelcomeHeader';
 import UserNameAndSearchBar from '../Components/UserNameAndSearchBar';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Home() {
     const { userData, setUserData } = useContext(AuthContext);
-    const [songsList, setSongsList] = useState([])
+    const [songsList, setSongsList] = useState()
 
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -27,7 +26,7 @@ export default function Home() {
 
     // songsList.map((data) => console.log(data.image[2].url))
     return (
-        <View>
+        <View >
             <WelcomeHeader></WelcomeHeader>
             <UserNameAndSearchBar></UserNameAndSearchBar>
             <Text style={{ fontSize: 24, fontWeight: "bold", paddingTop: 20, paddingLeft: 15, paddingBottom: 6 }}>Honey Singh</Text>

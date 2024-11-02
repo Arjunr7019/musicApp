@@ -6,10 +6,13 @@ import Services from './App/Shared/Services';
 import Navigation from './StackNavigator';
 import { ModalVisibility } from './App/Context/ModalVisibility';
 import { ModalPortal } from 'react-native-modals';
+import { CurrentMusic } from './App/Context/CurrentMusic';
 
 export default function App() {
   const [userData, setUserData] = useState()
   const [modalVisible, setModalVisible] = useState(false)
+  const [currentMusicData, setCurrentMusicData] = useState()
+
   useEffect(() => {
     Services.getUserAuth().then(res => {
       console.log(res);
@@ -19,14 +22,17 @@ export default function App() {
 
   return (
     <>
-      <ModalVisibility.Provider value={{ modalVisible, setModalVisible }}>
-        <AuthContext.Provider value={{ userData, setUserData }}>
-          {userData ? <>
-            <Navigation />
-            <ModalPortal />
-          </> : <Login />}
-        </AuthContext.Provider>
-      </ModalVisibility.Provider>
+      <CurrentMusic.Provider value={{currentMusicData, setCurrentMusicData}}>
+        <ModalVisibility.Provider value={{ modalVisible, setModalVisible }}>
+          <AuthContext.Provider value={{ userData, setUserData }}>
+            {userData ? <>
+              <Navigation />
+              <ModalPortal />
+            </>
+              : <Login />}
+          </AuthContext.Provider>
+        </ModalVisibility.Provider>
+      </CurrentMusic.Provider>
     </>
   );
 }
