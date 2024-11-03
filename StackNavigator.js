@@ -17,13 +17,17 @@ import { Pressable, View, Text, StyleSheet, Image } from "react-native";
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { CurrentMusic } from "./App/Context/CurrentMusic";
+import { MusicController } from "./App/Context/musicController";
 
 const Tab = createBottomTabNavigator();
 
 function BottomTabs() {
-    const progress = 0.5;
 
     const { modalVisible, setModalVisible } = useContext(ModalVisibility)
+    const { currentMusicData } = useContext(CurrentMusic)
+    const {musicControllerData, setMusicControllerData} = useContext(MusicController);
+
     return (
         <>
             <Tab.Navigator
@@ -108,20 +112,20 @@ function BottomTabs() {
                     </View>
                     <View style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection: "column", height: "90%", paddingTop: 10 }}>
                         <View style={{ width: "100%" }}>
-                            <Image style={{ width: 350, height: 350, borderRadius: 10 }} source={require('./App/Assets/Img/songBanner.png')} />
-                            <Text style={{ textAlign: "center", fontSize: 30, fontWeight: "bold" }}>Song Name</Text>
-                            <Text style={{ textAlign: "center", fontWeight: "bold" }}>Artist Name</Text>
+                            <Image style={{ width: 350, height: 350, borderRadius: 10 }} source={{uri:currentMusicData?.image}} />
+                            <Text style={{ textAlign: "center", fontSize: 30, fontWeight: "bold" }}>{currentMusicData?.name}</Text>
+                            <Text style={{ textAlign: "center", fontWeight: "bold" }}>{currentMusicData?.artist}</Text>
                         </View>
                         <View style={{ width: "100%" }}>
                             <View>
                                 <View style={{ width: "100%", marginTop: 10, height: 3, backgroundColor: "gray", borderRadius: 5 }}>
-                                    <View style={[style.progressBar, { width: `${progress * 100}%` }]} />
-                                    <View style={[style.progressCircle, { left: `${progress * 100}%`, marginLeft: -12 / 2 }]} />
+                                    <View style={[style.progressBar, { width: `${(musicControllerData?.position/musicControllerData?.duration) * 100}%` }]} />
+                                    <View style={[style.progressCircle, { left: `${(musicControllerData?.position/musicControllerData?.duration) * 100}%`, marginLeft: -12 / 2 }]} />
                                 </View>
                             </View>
                             <View style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection: "row", paddingVertical: 5 }}>
-                                <Text style={{ fontWeight: "bold" }}>00:00</Text>
-                                <Text style={{ fontWeight: "bold" }}>03:00</Text>
+                                <Text style={{ fontWeight: "bold" }}>{musicControllerData?.currentTime}</Text>
+                                <Text style={{ fontWeight: "bold" }}>{musicControllerData?.totalDuration}</Text>
                             </View>
                         </View>
                         <View style={{ width: "100%", display: "flex", justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", }}>
@@ -130,7 +134,7 @@ function BottomTabs() {
                             </Pressable>
                             <Pressable>
                                 <View style={{ display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "black", padding: 30, borderRadius: 80 }}>
-                                    <FontAwesome5 name="play" size={30} color="white" />
+                                    <FontAwesome5 name={musicControllerData?.isPlaying?"pause":"play"} size={30} color="white" />
                                 </View>
                             </Pressable>
                             <Pressable>

@@ -39,7 +39,7 @@ export default function SearchArea() {
                     onPress={() =>{setCurrentMusicData({
                         "name":item?.name,
                         "artist":item.artists.primary[0]?.name,
-                        "image":item.image[2].url,
+                        "image":item.image[2]?.url,
                         "download":item.downloadUrl[2].url,
                         "songSelected":true
                         })}}>
