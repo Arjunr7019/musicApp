@@ -18,7 +18,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { CurrentMusic } from "./App/Context/CurrentMusic";
-import { MusicController } from "./App/Context/musicController";
+import { MusicController } from "./App/Context/MusicController";
 
 const Tab = createBottomTabNavigator();
 
@@ -90,7 +90,7 @@ function BottomTabs() {
                     }}
                 />
             </Tab.Navigator>
-            <FloatingCurrentMusic />
+            {currentMusicData?.songSelected ? <FloatingCurrentMusic />:<></>}
             <BottomModal
                 visible={modalVisible} onSwipeOut={() => setModalVisible(false)} swipeDirection={["up", "down"]} swipeThreshold={200}>
                 <ModalContent style={{ height: "100%", width: "100%" }}>
@@ -132,7 +132,7 @@ function BottomTabs() {
                             <Pressable>
                                 <FontAwesome5 style={{ paddingHorizontal: 10 }} name="step-backward" size={30} color="black" />
                             </Pressable>
-                            <Pressable>
+                            <Pressable onPress={musicControllerData?.isPlaying ? musicControllerData?.pauseSound : musicControllerData?.playSound}>
                                 <View style={{ display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "black", padding: 30, borderRadius: 80 }}>
                                     <FontAwesome5 name={musicControllerData?.isPlaying?"pause":"play"} size={30} color="white" />
                                 </View>

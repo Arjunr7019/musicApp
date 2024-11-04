@@ -1,17 +1,17 @@
 import { View, Image, StyleSheet, Text, TouchableOpacity, Pressable } from 'react-native'
-import React, { useContext, useState ,useEffect,useRef } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { ModalVisibility } from '../Context/ModalVisibility';
 import { Audio } from 'expo-av';
 import { CurrentMusic } from '../Context/CurrentMusic';
 import { MovingText } from './MovingText';
-import { MusicController } from '../Context/musicController';
+import { MusicController } from '../Context/MusicController';
 
 export default function FloatingCurrentMusic() {
 
   const { modalVisible, setModalVisible } = useContext(ModalVisibility);
   const { currentMusicData, setCurrentMusicData } = useContext(CurrentMusic);
-  const {musicControllerData, setMusicControllerData} = useContext(MusicController);
+  const { musicControllerData, setMusicControllerData } = useContext(MusicController);
 
   const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(currentMusicData?.songSelected);
@@ -115,41 +115,49 @@ export default function FloatingCurrentMusic() {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     setMusicControllerData({
-      "position":position,
-      "duration":duration,
-      "currentTime":formatTime(position),
-      "totalDuration":formatTime(duration),
-      "isPlaying":isPlaying
+      "position": position,
+      "duration": duration,
+      "currentTime": formatTime(position),
+      "totalDuration": formatTime(duration),
+      "isPlaying": isPlaying,
+      "pauseSound": pauseSound,
+      "playSound": playSound
     })
-  },[position,isPlaying])
+  }, [position, isPlaying])
 
   return (
     <TouchableOpacity onPress={() => { setModalVisible(true) }} style={style.floatingPlayer}>
-      <View>
-        <Text >Current Time: {formatTime(position)}</Text>
-        <Text>Total Duration: {formatTime(duration)}</Text>
-      </View>
-      {/* <View style={style.musicImage}>
-        <Image style={{ width: "100%", height: "100%", borderRadius: 10 }} source={require('../Assets/Img/songBanner.png')} ></Image>
-      </View> */}
-      <View style={style.musicNameIcons}>
-        <View style={{overflow:"hidden",width:"50%"}}>
-          <MovingText style={style.songFontSize} text={currentMusicData?.name} animatedThreshold={25}/>
-          {/* <Text style={{ fontSize: 12, paddingStart: 10 }}>{currentMusicData?.name}</Text> */}
-          <Text style={{ fontSize: 12, paddingStart: 10 }}>{currentMusicData?.artist}</Text>
+      <View style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection: "row" }}>
+        <View style={{ width: "100%", height: 3, backgroundColor: "gray", borderRadius: 5 }}>
+          <View style={[style.progressBar, { width: `${(position / duration) * 100}%` }]} />
+          {/* <View style={[style.progressCircle, { left: `${(position / duration) * 100}%`, marginLeft: -12 / 2 }]} /> */}
         </View>
-        <View style={style.musicIcons}>
-          <Pressable>
-            <FontAwesome5 style={{ paddingHorizontal: 10, paddingVertical:10 }} name="step-backward" size={24} color="black" />
-          </Pressable>
-          <Pressable onPress={isPlaying ? pauseSound : playSound}>
-            <FontAwesome5 style={{ paddingHorizontal: 10, paddingVertical:10 }} name={isPlaying?"pause":"play"} size={24} color="black" />
-          </Pressable>
-          <Pressable>
-            <FontAwesome5 style={{ paddingHorizontal: 10, paddingVertical:10 }} name="step-forward" size={24} color="black" />
-          </Pressable>
+        {/* <Text >Current Time: {formatTime(position)}</Text>
+        <Text>Total Duration: {formatTime(duration)}</Text> */}
+      </View>
+      <View style={{ width: "100%", display: "flex", justifyContent: "center", flexDirection: "row" }}>
+        <View style={style.musicImage}>
+          <Image style={{ width: "100%", height: "100%", borderRadius: 10 }} source={{ uri: currentMusicData?.image }} ></Image>
+        </View>
+        <View style={style.musicNameIcons}>
+          <View style={{ overflow: "hidden", width: "50%" }}>
+            <MovingText style={style.songFontSize} text={currentMusicData?.name} animatedThreshold={25} />
+            {/* <Text style={{ fontSize: 12, paddingStart: 10 }}>{currentMusicData?.name}</Text> */}
+            <Text style={{ fontSize: 12, paddingStart: 10 }}>{currentMusicData?.artist}</Text>
+          </View>
+          <View style={style.musicIcons}>
+            <Pressable>
+              <FontAwesome5 style={{ paddingHorizontal: 10, paddingVertical: 10 }} name="step-backward" size={24} color="black" />
+            </Pressable>
+            <Pressable onPress={isPlaying ? pauseSound : playSound}>
+              <FontAwesome5 style={{ paddingHorizontal: 10, paddingVertical: 10 }} name={isPlaying ? "pause" : "play"} size={24} color="black" />
+            </Pressable>
+            <Pressable>
+              <FontAwesome5 style={{ paddingHorizontal: 10, paddingVertical: 10 }} name="step-forward" size={24} color="black" />
+            </Pressable>
+          </View>
         </View>
       </View>
     </TouchableOpacity>
@@ -165,7 +173,7 @@ const style = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    flexDirection: "row"
+    flexDirection: "column"
   },
   musicImage: {
     display: "flex",
@@ -189,9 +197,21 @@ const style = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
   },
-  songFontSize:{
-    fontSize: 16, 
+  songFontSize: {
+    fontSize: 16,
     paddingStart: 10,
-    fontWeight:"bold"
-  }
+    fontWeight: "bold"
+  },
+  progressBar: {
+    height: "100%",
+    backgroundColor: "#FFADA2"
+},
+progressCircle: {
+    position: "absolute",
+    top: -5,
+    width: 12,
+    height: 12,
+    borderRadius: 12 / 2,
+    backgroundColor: "#FFADA2"
+}
 })

@@ -7,7 +7,7 @@ import Navigation from './StackNavigator';
 import { ModalVisibility } from './App/Context/ModalVisibility';
 import { ModalPortal } from 'react-native-modals';
 import { CurrentMusic } from './App/Context/CurrentMusic';
-import { MusicController } from './App/Context/musicController';
+import { MusicController } from './App/Context/MusicController';
 
 export default function App() {
   const [userData, setUserData] = useState()
