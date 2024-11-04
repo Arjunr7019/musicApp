@@ -14,7 +14,7 @@ export default function FloatingCurrentMusic() {
   const { musicControllerData, setMusicControllerData } = useContext(MusicController);
 
   const [sound, setSound] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(currentMusicData?.songSelected);
+  const [isPlaying, setIsPlaying] = useState();
   const [position, setPosition] = useState(0); // Current playback position in ms
   const [duration, setDuration] = useState(0); // Total duration of the song in ms
   const [intervalId, setIntervalId] = useState(null); // For tracking the interval
@@ -127,11 +127,21 @@ export default function FloatingCurrentMusic() {
     })
   }, [position, isPlaying])
 
+  useEffect(() => {
+    if (isPlaying && duration !== 0 && position === duration) {
+      console.log("Song completed");
+      setIsPlaying(false);
+      setPosition(0);
+      setDuration(0);
+    }
+  }, [position]);
+  
+
   return (
     <TouchableOpacity onPress={() => { setModalVisible(true) }} style={style.floatingPlayer}>
       <View style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection: "row" }}>
         <View style={{ width: "100%", height: 3, backgroundColor: "gray", borderRadius: 5 }}>
-          <View style={[style.progressBar, { width: `${(position / duration) * 100}%` }]} />
+        <View style={[style.progressBar, { width: duration ? `${(position / duration) * 100}%` : '0%' }]} />
           {/* <View style={[style.progressCircle, { left: `${(position / duration) * 100}%`, marginLeft: -12 / 2 }]} /> */}
         </View>
         {/* <Text >Current Time: {formatTime(position)}</Text>
