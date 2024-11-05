@@ -75,7 +75,7 @@ function BottomTabs() {
                     component={PlayListLibrary}
                     options={{
                         tabBarLabel: "Library",
-                        headerShown: true,
+                        headerShown: false,
                         headerTitleAlign: "center",
                         // headerLeft: ()=> <Ionicons name="arrow-back" size={30} color="black" />,
                         tabBarIcon: ({ focused }) =>
