@@ -13,8 +13,19 @@ const Logout = ()=>{
     AsyncStorage.clear();
 }
 
+const setFavoriteMusicsList = async(value)=>{
+    await AsyncStorage.setItem('favorite',JSON.stringify(value))
+}
+
+const getFavoriteMusicsList = async()=>{
+    const value = await AsyncStorage.getItem('favorite');
+    return JSON.parse(value);
+}
+
 export default {
     setUserAuth,
     getUserAuth,
-    Logout
+    Logout,
+    setFavoriteMusicsList,
+    getFavoriteMusicsList
 }
