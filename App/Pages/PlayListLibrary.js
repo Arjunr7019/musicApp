@@ -7,7 +7,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from '@expo/vector-icons/Entypo';
 import Services from '../Shared/Services';
 
-const MusicCard = ({ name, artists, iconPress }) => {
+const MusicCard = ({ name, artists, iconPress,image }) => {
   return (
     <TouchableOpacity style={{ paddingLeft: 10, marginBottom: 10, backgroundColor: "white", borderRadius: 6, paddingVertical: 10, width: "100vw", display: "flex", alignItems: "center", flexDirection: "row" }}
     // onPress={() =>{setCurrentMusicData({
@@ -18,7 +18,7 @@ const MusicCard = ({ name, artists, iconPress }) => {
     //     "songSelected":true
     //     })}}
     >
-      <Image style={{ width: 50, height: 50 }} source={require("../Assets/Img/songBanner.png")} ></Image>
+      <Image style={{ width: 50, height: 50 }} source={{uri:image}} ></Image>
       <View style={{ width: "80%", display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection: "row" }}>
         <View style={{ paddingHorizontal: 10, display: "flex", alignItems: "center" }}>
           <Text style={{ width: "100%", fontWeight: "bold", fontSize: 16 }}>
@@ -29,7 +29,7 @@ const MusicCard = ({ name, artists, iconPress }) => {
           </Text>
         </View>
         <View style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection: "row" }}>
-          <Pressable onPress={ iconPress }>
+          <Pressable onPress={iconPress}>
             <Ionicons style={{ paddingHorizontal: 6 }} name="heart" size={24} color="red" />
           </Pressable>
           <Entypo style={{ paddingHorizontal: 6 }} name="dots-three-vertical" size={24} color="black" />
@@ -38,23 +38,23 @@ const MusicCard = ({ name, artists, iconPress }) => {
     </TouchableOpacity>
   )
 }
-const FavoritesScreen = ({ onPress, addMusic }) => {
+const FavoritesScreen = ({ onPress }) => {
 
   useEffect(() => {
     Services.getFavoriteMusicsList().then(res => {
       res ? setFavoritesSongsList(res) : setFavoritesSongsList(null)
     })
-  }, [addMusic,changes])
+  }, [changes])
 
   const [favoritesSongsList, setFavoritesSongsList] = useState(null)
   const [changes, setChanges] = useState(null)
 
-  const RemoveSong = async(index)=>{
+  const RemoveSong = async (index) => {
     let remove = favoritesSongsList;
     remove.splice(index, 1);
     await Services.setFavoriteMusicsList(remove);
     setChanges(index)
-    console.log(remove)
+    // console.log(remove)
   }
 
   return (
@@ -72,15 +72,15 @@ const FavoritesScreen = ({ onPress, addMusic }) => {
         <Image style={{ width: 120, height: 120, resizeMode: "cover", borderBottomRightRadius: 15 }} source={require("../Assets/Img/songBanner.png")} />
       </View>
       <View style={{ marginBottom: 10, display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <Pressable onPress={addMusic}>
+        <Pressable>
           <View style={{ borderRadius: 50, display: "flex", justifyContent: "center", alignItems: "center", width: 60, height: 60, backgroundColor: "#FFADA2" }}>
             <FontAwesome5 style={{ margin: "auto" }} name="play" size={24} color="white" />
           </View>
         </Pressable>
       </View>
-      <ScrollView style={{height:350}} showsVerticalScrollIndicator={false}>
-        {favoritesSongsList?.map((item, index)=>
-          <MusicCard key={item.id} name={item.name} artists={item.artist} iconPress={()=> RemoveSong(index)}/>
+      <ScrollView style={{ height: 350 }} showsVerticalScrollIndicator={false}>
+        {favoritesSongsList?.map((item, index) =>
+          <MusicCard key={item?.id} image={item?.image} name={item?.name} artists={item?.artist} iconPress={() => RemoveSong(index)} />
         )}
       </ScrollView>
     </View>
@@ -89,46 +89,10 @@ const FavoritesScreen = ({ onPress, addMusic }) => {
 export default function PlayListLibrary() {
 
   const [favorites, setFavorites] = useState(false);
-  const [count, setCount] = useState(0);
-  const [songsList, setSongsList] = useState([]);
-
-  const addNewSong = async () => {
-    setCount(count + 1);
-    const song = {
-      "id": count,
-      "name": `name ${count}`,
-      "artist": `artist ${count}`,
-      "image": "../Assets/Img/songBanner.png"
-    }
-    let list = songsList;
-    list.push(song);
-    setSongsList(list)
-
-    Services.getFavoriteMusicsList().then(res => {
-      if(res){
-        let favorite = res;
-        favorite.push(song);
-        Services.setFavoriteMusicsList(favorite)
-      }else{
-        Services.setFavoriteMusicsList(songsList)
-      }
-      // res ? setSongsList(res) : setSongsList([])
-      console.log(res);
-    })
-    setTimeout(()=>{
-      if (songsList) {
-        let favorite = songsList;
-        favorite.push(song);
-        Services.setFavoriteMusicsList(favorite)
-      } else {
-        Services.setFavoriteMusicsList(song)
-      }
-    })
-  }
 
   return (
     <>
-      {favorites ? <FavoritesScreen addMusic={()=>addNewSong()} onPress={() => setFavorites(false)}></FavoritesScreen> :
+      {favorites ? <FavoritesScreen onPress={() => setFavorites(false)}></FavoritesScreen> :
         <View style={[style.LibraryCardConatiner, { paddingTop: 40 }]}>
           <Text style={{ fontSize: 26, fontWeight: "bold", textAlign: "center" }}>Library</Text>
           <Pressable onPress={() => setFavorites(true)}>
