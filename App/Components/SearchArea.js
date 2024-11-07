@@ -26,21 +26,21 @@ export default function SearchArea() {
         } else {
             fetch(`https://saavn.dev/api/search/songs?query=${searchValue}'`, requestOptions)
                 .then(response => response.json())
-                .then(result => {setSearchedSongs(result.data.results); console.log(searchedSongs[0].id)})
+                .then(result => { setSearchedSongs(result.data.results); console.log(searchedSongs[0].id) })
                 .catch(error => console.log('error', error));
         }
     }
 
-    
-    const[favoriteListChanges, setFavoriteListChanges] = useState()
-    
+
+    const [favoriteListChanges, setFavoriteListChanges] = useState()
+
     useEffect(() => {
         Services.getFavoriteMusicsList().then(res => {
             res ? setCompareSearchToFavorite(res) : setCompareSearchToFavorite();
         })
     }, [favoriteListChanges])
 
-    const addNewSongToFavoriteList = (item) => {
+    const addNewSongToFavoriteList = (item, index) => {
         let song = {
             "id": item?.id,
             "name": item?.name,
@@ -48,31 +48,26 @@ export default function SearchArea() {
             "image": item.image[2]?.url,
             "download": item.downloadUrl[2].url
         }
-        // console.log(item)
         Services.getFavoriteMusicsList().then(res => {
-            let list = [];
-            list.push(song);
             if (res) {
-                let favorite = res;
-                favorite.push(song);
-                Services.setFavoriteMusicsList(favorite)
+                const isSongInFavorites = res.some(favSong => favSong.id === item.id);
+                if (isSongInFavorites) {
+                    // Remove the song if it's already in the list
+                    const updatedList = res.filter(favSong => favSong.id !== item.id);
+                    Services.setFavoriteMusicsList(updatedList);
+                    setFavoriteListChanges("songIsRemoves");
+                }else{
+                    let favorite = res;
+                    favorite.push(song);
+                    Services.setFavoriteMusicsList(favorite)
+                    setFavoriteListChanges("songIsAdded");
+                }
             } else {
-                Services.setFavoriteMusicsList(list)
+                Services.setFavoriteMusicsList([song])
+                setFavoriteListChanges("favorite List is empty, newList is created");
             }
             setFavoriteListChanges(item?.id);
         })
-    }
-
-    const compare = (item)=>{
-        if(compareSearchToFavorite){
-            compareSearchToFavorite.forEach((data)=>{
-                if(item == data?.id){
-                    return "heart"
-                }else{
-                    return "heart-outline"
-                }
-            })
-        }
     }
 
     return (
@@ -83,7 +78,7 @@ export default function SearchArea() {
             <SafeAreaView style={{ marginBottom: 80, width: "100%" }}>
                 <FlatList style={{ width: "100%" }} showsVerticalScrollIndicator={false}
                     data={searchedSongs}
-                    renderItem={({ item }) =>
+                    renderItem={({ item, index }) =>
                     (<View style={{ backgroundColor: "white", marginVertical: 5, borderRadius: 6, paddingHorizontal: 10, width: "100%" }}>
                         <TouchableOpacity style={{ paddingVertical: 10, width: "100%", display: "flex", flexDirection: "row" }}
                             onPress={() => {
@@ -106,11 +101,15 @@ export default function SearchArea() {
                             </View>
                             <View style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "row" }}>
                                 <Pressable onPress={() => {
-                                    addNewSongToFavoriteList(item);
+                                    addNewSongToFavoriteList(item, index);
                                 }}>
-                                    <Ionicons style={{ paddingHorizontal: 6 }}
-                                        name="heart" size={24}
-                                        color={compareSearchToFavorite?.id == item?.id ? "red" : "black"} />
+                                    {compareSearchToFavorite?.some(data => data?.id === item?.id) ? (
+                                        <Ionicons key={item?.id} style={{ paddingHorizontal: 6 }}
+                                            name="heart" size={24} color="red" />
+                                    ) : (
+                                        <Ionicons key={item?.id} style={{ paddingHorizontal: 6 }}
+                                            name="heart-outline" size={24} color="black" />
+                                    )}
                                 </Pressable>
                                 <Pressable>
                                     <Entypo style={{ paddingHorizontal: 6 }} name="dots-three-vertical" size={24} color="black" />

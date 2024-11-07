@@ -46,7 +46,7 @@ const FavoritesScreen = ({ onPress }) => {
     })
   }, [changes])
 
-  const [favoritesSongsList, setFavoritesSongsList] = useState(null)
+  const [favoritesSongsList, setFavoritesSongsList] = useState([])
   const [changes, setChanges] = useState(null)
 
   const RemoveSong = async (index) => {
@@ -66,10 +66,10 @@ const FavoritesScreen = ({ onPress }) => {
         <Text style={{ width: "65%", fontSize: 26, fontWeight: "bold" }}>Favorites</Text>
       </View>
       <View style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "row", flexWrap: "wrap", paddingVertical: 20 }}>
-        <Image style={{ width: 120, height: 120, resizeMode: "cover", borderTopLeftRadius: 15 }} source={require("../Assets/Img/songBanner.png")} />
-        <Image style={{ width: 120, height: 120, resizeMode: "cover", borderTopRightRadius: 15 }} source={require("../Assets/Img/songBanner.png")} />
-        <Image style={{ width: 120, height: 120, resizeMode: "cover", borderBottomLeftRadius: 15 }} source={require("../Assets/Img/songBanner.png")} />
-        <Image style={{ width: 120, height: 120, resizeMode: "cover", borderBottomRightRadius: 15 }} source={require("../Assets/Img/songBanner.png")} />
+        <Image style={{ width: 120, height: 120, resizeMode: "cover", borderTopLeftRadius: 15 }} source={{uri:favoritesSongsList[0]?.image}} />
+        <Image style={{ width: 120, height: 120, resizeMode: "cover", borderTopRightRadius: 15 }} source={{uri:favoritesSongsList[1]?.image}} />
+        <Image style={{ width: 120, height: 120, resizeMode: "cover", borderBottomLeftRadius: 15 }} source={{uri:favoritesSongsList[2]?.image}} />
+        <Image style={{ width: 120, height: 120, resizeMode: "cover", borderBottomRightRadius: 15 }} source={{uri:favoritesSongsList[3]?.image}} />
       </View>
       <View style={{ marginBottom: 10, display: "flex", justifyContent: "center", alignItems: "center" }}>
         <Pressable>
