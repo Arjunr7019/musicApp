@@ -6,12 +6,15 @@ import { Audio } from 'expo-av';
 import { CurrentMusic } from '../Context/CurrentMusic';
 import { MovingText } from './MovingText';
 import { MusicController } from '../Context/MusicController';
+import { FavoriteMusicContext } from '../Context/FavoriteMusicContext';
+import Services from '../Shared/Services';
 
 export default function FloatingCurrentMusic() {
 
   const { modalVisible, setModalVisible } = useContext(ModalVisibility);
   const { currentMusicData, setCurrentMusicData } = useContext(CurrentMusic);
   const { musicControllerData, setMusicControllerData } = useContext(MusicController);
+  const { favorites, setFavorites } = useContext(FavoriteMusicContext);
 
   const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState();
@@ -19,6 +22,9 @@ export default function FloatingCurrentMusic() {
   const [duration, setDuration] = useState(0); // Total duration of the song in ms
   const [intervalId, setIntervalId] = useState(null); // For tracking the interval
   const [songUrl, setSongUrl] = useState(currentMusicData?.download); // Initial song URL
+  // const [currentIndex, setCurrentIndex] = useState(0);
+
+  let currentIndex = 0;
 
   const loadAndPlaySound = async (url) => {
     try {
@@ -123,25 +129,49 @@ export default function FloatingCurrentMusic() {
       "totalDuration": formatTime(duration),
       "isPlaying": isPlaying,
       "pauseSound": pauseSound,
-      "playSound": playSound
+      "playSound": playSound,
+      "favoriteSongsFunction":favoriteSongs
     })
   }, [position, isPlaying])
 
+  //Song completed message
   useEffect(() => {
     if (isPlaying && duration !== 0 && position === duration) {
       console.log("Song completed");
       setIsPlaying(false);
       setPosition(0);
       setDuration(0);
+      if(currentMusicData?.fromFavoriteList){
+        ++currentIndex
+        console.log(currentIndex)
+        favoriteSongs()
+      }
     }
   }, [position]);
-  
+
+  useEffect(() => {
+    Services.getFavoriteMusicsList().then(res => {
+      res ? setFavorites(res) : setFavorites([]);
+    })
+  }, [currentMusicData])
+
+  const favoriteSongs = () => {
+    setCurrentMusicData({
+      "name": favorites[currentIndex]?.name,
+      "artist": favorites[currentIndex]?.artist,
+      "image": favorites[currentIndex]?.image,
+      "download": favorites[currentIndex]?.download,
+      "songSelected": true,
+      "fromFavoriteList":true,
+    })
+  }
+
 
   return (
     <TouchableOpacity onPress={() => { setModalVisible(true) }} style={style.floatingPlayer}>
       <View style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection: "row" }}>
         <View style={{ width: "100%", height: 3, backgroundColor: "gray", borderRadius: 5 }}>
-        <View style={[style.progressBar, { width: duration ? `${(position / duration) * 100}%` : '0%' }]} />
+          <View style={[style.progressBar, { width: duration ? `${(position / duration) * 100}%` : '0%' }]} />
           {/* <View style={[style.progressCircle, { left: `${(position / duration) * 100}%`, marginLeft: -12 / 2 }]} /> */}
         </View>
         {/* <Text >Current Time: {formatTime(position)}</Text>
@@ -205,7 +235,7 @@ const style = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    flexDirection: "row",
+    flexDirection: "row"
   },
   songFontSize: {
     fontSize: 16,
@@ -215,13 +245,13 @@ const style = StyleSheet.create({
   progressBar: {
     height: "100%",
     backgroundColor: "#FFADA2"
-},
-progressCircle: {
+  },
+  progressCircle: {
     position: "absolute",
     top: -5,
     width: 12,
     height: 12,
     borderRadius: 12 / 2,
     backgroundColor: "#FFADA2"
-}
+  }
 })

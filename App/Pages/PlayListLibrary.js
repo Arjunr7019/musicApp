@@ -1,11 +1,13 @@
 import { View, Text, StyleSheet, Pressable, Image, TouchableOpacity, ScrollView } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Fontisto from '@expo/vector-icons/Fontisto';
 import Feather from '@expo/vector-icons/Feather';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from '@expo/vector-icons/Entypo';
 import Services from '../Shared/Services';
+import { MusicController } from '../Context/MusicController';
+import { MovingText } from '../Components/MovingText';
 
 const MusicCard = ({ name, artists, iconPress,image }) => {
   return (
@@ -18,9 +20,10 @@ const MusicCard = ({ name, artists, iconPress,image }) => {
     //     "songSelected":true
     //     })}}
     >
-      <Image style={{ width: 50, height: 50 }} source={{uri:image}} ></Image>
-      <View style={{ width: "80%", display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection: "row" }}>
+      <Image style={{display:"flex",zIndex:1, width: 50, height: 50 }} source={{uri:image}} ></Image>
+      <View style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection: "row" }}>
         <View style={{ paddingHorizontal: 10, display: "flex", alignItems: "center" }}>
+          {/* <MovingText style={{ fontWeight: "bold", fontSize: 16 }} text={name} animatedThreshold={25}/> */}
           <Text style={{ width: "100%", fontWeight: "bold", fontSize: 16 }}>
             {name}
           </Text>
@@ -28,7 +31,7 @@ const MusicCard = ({ name, artists, iconPress,image }) => {
             {artists}
           </Text>
         </View>
-        <View style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection: "row" }}>
+        <View style={{ display: "flex", justifyContent: "start", alignItems: "center", flexDirection: "row" }}>
           <Pressable onPress={iconPress}>
             <Ionicons style={{ paddingHorizontal: 6 }} name="heart" size={24} color="red" />
           </Pressable>
@@ -38,7 +41,7 @@ const MusicCard = ({ name, artists, iconPress,image }) => {
     </TouchableOpacity>
   )
 }
-const FavoritesScreen = ({ onPress }) => {
+const FavoritesScreen = ({ backToPlaylist }) => {
 
   useEffect(() => {
     Services.getFavoriteMusicsList().then(res => {
@@ -48,6 +51,8 @@ const FavoritesScreen = ({ onPress }) => {
 
   const [favoritesSongsList, setFavoritesSongsList] = useState([])
   const [changes, setChanges] = useState(null)
+
+  const { musicControllerData, setMusicControllerData } = useContext(MusicController);
 
   const RemoveSong = async (index) => {
     let remove = favoritesSongsList;
@@ -60,7 +65,7 @@ const FavoritesScreen = ({ onPress }) => {
   return (
     <View style={[style.LibraryCardConatiner, { paddingTop: 40 }]}>
       <View style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "row" }}>
-        <Pressable style={{ width: "35%" }} onPress={onPress}>
+        <Pressable style={{ width: "35%" }} onPress={backToPlaylist}>
           <Ionicons style={{ width: "35%" }} name="arrow-back-outline" size={30} color="black" />
         </Pressable>
         <Text style={{ width: "65%", fontSize: 26, fontWeight: "bold" }}>Favorites</Text>
@@ -72,7 +77,7 @@ const FavoritesScreen = ({ onPress }) => {
         <Image style={{ width: 120, height: 120, resizeMode: "cover", borderBottomRightRadius: 15 }} source={{uri:favoritesSongsList[3]?.image}} />
       </View>
       <View style={{ marginBottom: 10, display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <Pressable>
+        <Pressable onPress={musicControllerData?.favoriteSongsFunction}>
           <View style={{ borderRadius: 50, display: "flex", justifyContent: "center", alignItems: "center", width: 60, height: 60, backgroundColor: "#FFADA2" }}>
             <FontAwesome5 style={{ margin: "auto" }} name="play" size={24} color="white" />
           </View>
@@ -92,7 +97,7 @@ export default function PlayListLibrary() {
 
   return (
     <>
-      {favorites ? <FavoritesScreen onPress={() => setFavorites(false)}></FavoritesScreen> :
+      {favorites ? <FavoritesScreen backToPlaylist={() => setFavorites(false)}></FavoritesScreen> :
         <View style={[style.LibraryCardConatiner, { paddingTop: 40 }]}>
           <Text style={{ fontSize: 26, fontWeight: "bold", textAlign: "center" }}>Library</Text>
           <Pressable onPress={() => setFavorites(true)}>

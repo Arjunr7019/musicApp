@@ -87,7 +87,8 @@ export default function SearchArea() {
                                     "artist": item.artists.primary[0]?.name,
                                     "image": item.image[2]?.url,
                                     "download": item.downloadUrl[2].url,
-                                    "songSelected": true
+                                    "songSelected": true,
+                                    "fromFavoriteList":false,
                                 })
                             }}>
                             <Image style={{ width: 50, height: 50 }} source={{ uri: item.image[2].url }} ></Image>

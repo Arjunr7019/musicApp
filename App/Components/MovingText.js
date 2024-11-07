@@ -5,7 +5,7 @@ export const MovingText = ({text,animatedThreshold, style})=>{
     const translateX = useSharedValue(0)
     const shouldAnimate = text?.length >= animatedThreshold
 
-    const textWidth = text?.length * 3
+    const textWidth = text?.length * 2
 
     useEffect(()=>{
         if(!shouldAnimate) return
@@ -29,7 +29,7 @@ export const MovingText = ({text,animatedThreshold, style})=>{
 
     return(
         <Animated.Text numberOfLines={1} style={[style, animatedStyle, shouldAnimate && {
-            width: 9999,
+            width: 400,
             paddingLeft:16
         }]}>
              {text}

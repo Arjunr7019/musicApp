@@ -8,12 +8,14 @@ import { ModalVisibility } from './App/Context/ModalVisibility';
 import { ModalPortal } from 'react-native-modals';
 import { CurrentMusic } from './App/Context/CurrentMusic';
 import { MusicController } from './App/Context/MusicController';
+import { FavoriteMusicContext } from './App/Context/FavoriteMusicContext';
 
 export default function App() {
   const [userData, setUserData] = useState()
   const [modalVisible, setModalVisible] = useState(false)
   const [currentMusicData, setCurrentMusicData] = useState()
   const [musicControllerData, setMusicControllerData] = useState()
+  const [favorites, setFavorites] = useState()
 
   useEffect(() => {
     Services.getUserAuth().then(res => {
@@ -24,19 +26,21 @@ export default function App() {
 
   return (
     <>
-    <MusicController.Provider value={{musicControllerData, setMusicControllerData}}>
-      <CurrentMusic.Provider value={{currentMusicData, setCurrentMusicData}}>
-        <ModalVisibility.Provider value={{ modalVisible, setModalVisible }}>
-          <AuthContext.Provider value={{ userData, setUserData }}>
-            {userData ? <>
-              <Navigation />
-              <ModalPortal />
-            </>
-              : <Login />}
-          </AuthContext.Provider>
-        </ModalVisibility.Provider>
-      </CurrentMusic.Provider>
-      </MusicController.Provider>
+      <FavoriteMusicContext.Provider value={{favorites, setFavorites}}>
+        <MusicController.Provider value={{ musicControllerData, setMusicControllerData }}>
+          <CurrentMusic.Provider value={{ currentMusicData, setCurrentMusicData }}>
+            <ModalVisibility.Provider value={{ modalVisible, setModalVisible }}>
+              <AuthContext.Provider value={{ userData, setUserData }}>
+                {userData ? <>
+                  <Navigation />
+                  <ModalPortal />
+                </>
+                  : <Login />}
+              </AuthContext.Provider>
+            </ModalVisibility.Provider>
+          </CurrentMusic.Provider>
+        </MusicController.Provider>
+      </FavoriteMusicContext.Provider>
     </>
   );
 }
