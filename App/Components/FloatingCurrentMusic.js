@@ -25,7 +25,6 @@ export default function FloatingCurrentMusic() {
   // const [currentIndex, setCurrentIndex] = useState(0);
 
   let currentIndex = 0;
-
   const loadAndPlaySound = async (url) => {
     try {
       // Unload the current sound if it exists
@@ -130,7 +129,7 @@ export default function FloatingCurrentMusic() {
       "isPlaying": isPlaying,
       "pauseSound": pauseSound,
       "playSound": playSound,
-      "favoriteSongsFunction":favoriteSongs
+      "favoriteSongsFunction": favoriteSongs
     })
   }, [position, isPlaying])
 
@@ -141,29 +140,38 @@ export default function FloatingCurrentMusic() {
       setIsPlaying(false);
       setPosition(0);
       setDuration(0);
-      if(currentMusicData?.fromFavoriteList){
-        ++currentIndex
-        console.log(currentIndex)
-        favoriteSongs()
+      if (currentMusicData?.fromFavoriteList) {
+        Services.getIndexValue().then(res => {
+          res ? currentIndex = res : currentIndex = 0;
+          console.log("favorite list length", favorites?.length);
+          console.log(res);
+          setTimeout(()=>{
+            if (currentIndex < favorites?.length) {
+              Services.setIndexValue(currentIndex + 1);
+              console.log(currentIndex)
+              favoriteSongs()
+            }else if(currentIndex === favorites?.length){
+              Services.setIndexValue(0);
+            }
+          })
+        })
       }
     }
   }, [position]);
 
-  useEffect(() => {
-    Services.getFavoriteMusicsList().then(res => {
-      res ? setFavorites(res) : setFavorites([]);
-    })
-  }, [currentMusicData])
-
   const favoriteSongs = () => {
+    console.log("inSide Function", currentIndex);
     setCurrentMusicData({
       "name": favorites[currentIndex]?.name,
       "artist": favorites[currentIndex]?.artist,
       "image": favorites[currentIndex]?.image,
       "download": favorites[currentIndex]?.download,
       "songSelected": true,
-      "fromFavoriteList":true,
+      "fromFavoriteList": true,
     })
+    // if (favorites[currentIndex]?.download) {
+    //   loadAndPlaySound(favorites[currentIndex]?.download);
+    // }
   }
 
 

@@ -22,6 +22,9 @@ export default function App() {
       console.log(res);
       res ? setUserData(res) : setUserData(null);
     })
+    Services.getFavoriteMusicsList().then(res => {
+      res ? setFavorites(res) : setFavorites([]);
+    })
   }, [])
 
   return (

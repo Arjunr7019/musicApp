@@ -4,6 +4,7 @@ import { CurrentMusic } from '../Context/CurrentMusic'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from '@expo/vector-icons/Entypo';
 import Services from '../Shared/Services';
+import { FavoriteMusicContext } from '../Context/FavoriteMusicContext';
 
 export default function SearchArea() {
     const [searchValue, setSearchValue] = useState('')
@@ -11,6 +12,7 @@ export default function SearchArea() {
     const [compareSearchToFavorite, setCompareSearchToFavorite] = useState()
 
     const { currentMusicData, setCurrentMusicData } = useContext(CurrentMusic);
+    const { favorites, setFavorites } = useContext(FavoriteMusicContext);
 
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -55,15 +57,18 @@ export default function SearchArea() {
                     // Remove the song if it's already in the list
                     const updatedList = res.filter(favSong => favSong.id !== item.id);
                     Services.setFavoriteMusicsList(updatedList);
+                    setFavorites(updatedList)
                     setFavoriteListChanges("songIsRemoves");
                 }else{
                     let favorite = res;
                     favorite.push(song);
-                    Services.setFavoriteMusicsList(favorite)
+                    Services.setFavoriteMusicsList(favorite);
+                    setFavorites(favorite);
                     setFavoriteListChanges("songIsAdded");
                 }
             } else {
                 Services.setFavoriteMusicsList([song])
+                setFavorites([song]);
                 setFavoriteListChanges("favorite List is empty, newList is created");
             }
             setFavoriteListChanges(item?.id);
@@ -81,12 +86,12 @@ export default function SearchArea() {
                     renderItem={({ item, index }) =>
                     (<View style={{ backgroundColor: "white", marginVertical: 5, borderRadius: 6, paddingHorizontal: 10, width: "100%" }}>
                         <TouchableOpacity style={{ paddingVertical: 10, width: "100%", display: "flex", flexDirection: "row" }}
-                            onPress={() => {
+                            onPress={() => { 
                                 setCurrentMusicData({
                                     "name": item?.name,
                                     "artist": item.artists.primary[0]?.name,
                                     "image": item.image[2]?.url,
-                                    "download": item.downloadUrl[2].url,
+                                    "download": item.downloadUrl[2]?.url,
                                     "songSelected": true,
                                     "fromFavoriteList":false,
                                 })

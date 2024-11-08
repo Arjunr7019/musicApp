@@ -22,11 +22,11 @@ const MusicCard = ({ name, artists, iconPress,image }) => {
     >
       <Image style={{display:"flex",zIndex:1, width: 50, height: 50 }} source={{uri:image}} ></Image>
       <View style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection: "row" }}>
-        <View style={{ paddingHorizontal: 10, display: "flex", alignItems: "center" }}>
-          {/* <MovingText style={{ fontWeight: "bold", fontSize: 16 }} text={name} animatedThreshold={25}/> */}
-          <Text style={{ width: "100%", fontWeight: "bold", fontSize: 16 }}>
+        <View style={{ width:"60%",overflow:"hidden", paddingHorizontal: 10, display: "flex", alignItems: "center" }}>
+          <MovingText style={{ fontWeight: "bold", fontSize: 16 }} text={name} animatedThreshold={25}/>
+          {/* <Text style={{ width: "100%", fontWeight: "bold", fontSize: 16 }}>
             {name}
-          </Text>
+          </Text> */}
           <Text style={{ width: "100%" }}>
             {artists}
           </Text>
@@ -62,6 +62,11 @@ const FavoritesScreen = ({ backToPlaylist }) => {
     // console.log(remove)
   }
 
+  const playAll = ()=>{
+    musicControllerData?.favoriteSongsFunction()
+    Services.setIndexValue(1);
+  }
+
   return (
     <View style={[style.LibraryCardConatiner, { paddingTop: 40 }]}>
       <View style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "row" }}>
@@ -77,7 +82,7 @@ const FavoritesScreen = ({ backToPlaylist }) => {
         <Image style={{ width: 120, height: 120, resizeMode: "cover", borderBottomRightRadius: 15 }} source={{uri:favoritesSongsList[3]?.image}} />
       </View>
       <View style={{ marginBottom: 10, display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <Pressable onPress={musicControllerData?.favoriteSongsFunction}>
+        <Pressable onPress={playAll}>
           <View style={{ borderRadius: 50, display: "flex", justifyContent: "center", alignItems: "center", width: 60, height: 60, backgroundColor: "#FFADA2" }}>
             <FontAwesome5 style={{ margin: "auto" }} name="play" size={24} color="white" />
           </View>

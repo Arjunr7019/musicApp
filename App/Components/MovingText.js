@@ -29,8 +29,8 @@ export const MovingText = ({text,animatedThreshold, style})=>{
 
     return(
         <Animated.Text numberOfLines={1} style={[style, animatedStyle, shouldAnimate && {
-            width: 400,
-            paddingLeft:16
+            width: 250,
+            paddingLeft:60
         }]}>
              {text}
         </Animated.Text>

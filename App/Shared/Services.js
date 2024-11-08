@@ -22,10 +22,20 @@ const getFavoriteMusicsList = async()=>{
     return JSON.parse(value);
 }
 
+const setIndexValue = async(value)=>{
+    await AsyncStorage.setItem('index',JSON.stringify(value))
+}
+const getIndexValue = async()=>{
+    const value = await AsyncStorage.getItem('index');
+    return JSON.parse(value);
+}
+
 export default {
     setUserAuth,
     getUserAuth,
     Logout,
     setFavoriteMusicsList,
-    getFavoriteMusicsList
+    getFavoriteMusicsList,
+    setIndexValue,
+    getIndexValue
 }
