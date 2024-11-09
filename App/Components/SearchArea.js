@@ -1,4 +1,4 @@
-import { View, Text, TextInput, FlatList, TouchableOpacity, Image, SafeAreaView, Pressable } from 'react-native'
+import { StyleSheet,View, Text, TextInput, FlatList, TouchableOpacity, Image, SafeAreaView, Pressable } from 'react-native'
 import React, { useState, useContext, useEffect } from 'react'
 import { CurrentMusic } from '../Context/CurrentMusic'
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -28,7 +28,7 @@ export default function SearchArea() {
         } else {
             fetch(`https://saavn.dev/api/search/songs?query=${searchValue}'`, requestOptions)
                 .then(response => response.json())
-                .then(result => { setSearchedSongs(result.data.results); console.log(searchedSongs[0].id) })
+                .then(result => { setSearchedSongs(result.data.results)})
                 .catch(error => console.log('error', error));
         }
     }
@@ -40,7 +40,7 @@ export default function SearchArea() {
         Services.getFavoriteMusicsList().then(res => {
             res ? setCompareSearchToFavorite(res) : setCompareSearchToFavorite();
         })
-    }, [favoriteListChanges])
+    }, [favoriteListChanges,searchedSongs,favorites])
 
     const addNewSongToFavoriteList = (item, index) => {
         let song = {
@@ -80,7 +80,7 @@ export default function SearchArea() {
             <View style={{ width: "100%" }}>
                 <TextInput onSubmitEditing={searchMusic} style={{ height: 40, width: "100%", borderWidth: 1, borderRadius: 30, paddingHorizontal: 15 }} onChangeText={setSearchValue} value={searchValue} placeholder='Search' />
             </View>
-            <SafeAreaView style={{ marginBottom: 80, width: "100%" }}>
+            <SafeAreaView style={currentMusicData ? style.searchListFloatingMusicTrue : style.searchList}>
                 <FlatList style={{ width: "100%" }} showsVerticalScrollIndicator={false}
                     data={searchedSongs}
                     renderItem={({ item, index }) =>
@@ -128,3 +128,14 @@ export default function SearchArea() {
         </View>
     )
 }
+
+const style = StyleSheet.create({
+    searchList:{
+        width: "100%",
+        marginBottom: 80
+    },
+    searchListFloatingMusicTrue:{
+        width: "100%",
+        marginBottom: 150
+    }
+  })

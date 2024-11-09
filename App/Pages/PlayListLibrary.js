@@ -5,20 +5,16 @@ import Feather from '@expo/vector-icons/Feather';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from '@expo/vector-icons/Entypo';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Services from '../Shared/Services';
 import { MusicController } from '../Context/MusicController';
 import { MovingText } from '../Components/MovingText';
+import { CurrentMusic } from '../Context/CurrentMusic';
 
-const MusicCard = ({ name, artists, iconPress, image }) => {
+const MusicCard = ({ name, artists, iconPress, image,selectedCard }) => {
   return (
     <TouchableOpacity style={{ paddingLeft: 10, marginBottom: 10, backgroundColor: "white", borderRadius: 6, paddingVertical: 10, width: "100vw", display: "flex", alignItems: "center", flexDirection: "row" }}
-    // onPress={() =>{setCurrentMusicData({
-    //     "name":item?.name,
-    //     "artist":item.artists.primary[0]?.name,
-    //     "image":item.image[2]?.url,
-    //     "download":item.downloadUrl[2].url,
-    //     "songSelected":true
-    //     })}}
+      onPress={selectedCard}
     >
       <Image style={{ display: "flex", zIndex: 1, width: 50, height: 50 }} source={{ uri: image }} ></Image>
       <View style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection: "row" }}>
@@ -43,10 +39,11 @@ const MusicCard = ({ name, artists, iconPress, image }) => {
 }
 const FavoritesScreen = ({ backToPlaylist }) => {
 
-  const [favoritesSongsList, setFavoritesSongsList] = useState([])
+  const [favoritesSongsList, setFavoritesSongsList] = useState(null)
   const [changes, setChanges] = useState(null)
-  
+
   const { musicControllerData, setMusicControllerData } = useContext(MusicController);
+  const { currentMusicData, setCurrentMusicData } = useContext(CurrentMusic);
 
   useEffect(() => {
     Services.getFavoriteMusicsList().then(res => {
@@ -57,7 +54,7 @@ const FavoritesScreen = ({ backToPlaylist }) => {
   const RemoveSong = async (index) => {
     let remove = favoritesSongsList;
     remove.splice(index, 1);
-    await Services.setFavoriteMusicsList(remove);
+    remove.length === 0 ? await Services.setFavoriteMusicsList(null) : await Services.setFavoriteMusicsList(remove)
     setChanges(index)
     // console.log(remove)
   }
@@ -67,38 +64,61 @@ const FavoritesScreen = ({ backToPlaylist }) => {
     Services?.setIndexValue(1);
   }
 
+  const playSelectedMusic = (item,index)=>{
+    setCurrentMusicData({
+      "name": item?.name,
+      "artist": item?.artist,
+      "image": item?.image,
+      "download": item?.download,
+      "songSelected": true,
+      "fromFavoriteList": true
+    })
+    Services.getIndexValue().then(res =>{
+      res ? Services.setIndexValue(index + 1) : Services.setIndexValue(index + 1)
+    })
+  }
+
   return (
     <>
-      {favoritesSongsList === null? 
-      <View>
-        <Text>Empty Favorites List</Text>
-      </View>:
-      <View style={[style.LibraryCardConatiner, { paddingTop: 40 }]}>
-        <View style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "row" }}>
-          <Pressable style={{ width: "35%" }} onPress={backToPlaylist}>
-            <Ionicons style={{ width: "35%" }} name="arrow-back-outline" size={30} color="black" />
-          </Pressable>
-          <Text style={{ width: "65%", fontSize: 26, fontWeight: "bold" }}>Favorites</Text>
-        </View>
-        <View style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "row", flexWrap: "wrap", paddingVertical: 20 }}>
-          <Image style={{ width: 120, height: 120, resizeMode: "cover", borderTopLeftRadius: 15 }} source={{ uri: favoritesSongsList[0]?.image }} />
-          <Image style={{ width: 120, height: 120, resizeMode: "cover", borderTopRightRadius: 15 }} source={{ uri: favoritesSongsList[1]?.image }} />
-          <Image style={{ width: 120, height: 120, resizeMode: "cover", borderBottomLeftRadius: 15 }} source={{ uri: favoritesSongsList[2]?.image }} />
-          <Image style={{ width: 120, height: 120, resizeMode: "cover", borderBottomRightRadius: 15 }} source={{ uri: favoritesSongsList[3]?.image }} />
-        </View>
-        <View style={{ marginBottom: 10, display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <Pressable onPress={playAll}>
-            <View style={{ borderRadius: 50, display: "flex", justifyContent: "center", alignItems: "center", width: 60, height: 60, backgroundColor: "#FFADA2" }}>
-              <FontAwesome5 style={{ margin: "auto" }} name="play" size={24} color="white" />
-            </View>
-          </Pressable>
-        </View>
-        <ScrollView style={{ height: 350 }} showsVerticalScrollIndicator={false}>
-          {favoritesSongsList?.map((item, index) =>
-            <MusicCard key={item?.id} image={item?.image} name={item?.name} artists={item?.artist} iconPress={() => RemoveSong(index)} />
-          )}
-        </ScrollView>
-      </View>}
+      {favoritesSongsList === null ?
+        <View style={[style.LibraryCardConatiner, { paddingTop: 40 }]}>
+          <View style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "row" }}>
+            <Pressable style={{ width: "35%" }} onPress={backToPlaylist}>
+              <Ionicons style={{ width: "35%" }} name="arrow-back-outline" size={30} color="black" />
+            </Pressable>
+            <Text style={{ width: "65%", fontSize: 26, fontWeight: "bold" }}>Favorites</Text>
+          </View>
+          <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+            <MaterialCommunityIcons name="emoticon-sad-outline" size={40} color="gray" />
+            <Text style={{ fontSize: 30, color: "gray" }}>Empty Favorites List</Text>
+          </View>
+        </View> :
+        <View style={[style.LibraryCardConatiner, { paddingTop: 40 }]}>
+          <View style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "row" }}>
+            <Pressable style={{ width: "35%" }} onPress={backToPlaylist}>
+              <Ionicons style={{ width: "35%" }} name="arrow-back-outline" size={30} color="black" />
+            </Pressable>
+            <Text style={{ width: "65%", fontSize: 26, fontWeight: "bold" }}>Favorites</Text>
+          </View>
+          <View style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "row", flexWrap: "wrap", paddingVertical: 20 }}>
+            <Image style={{ width: 120, height: 120, resizeMode: "cover", borderTopLeftRadius: 15 }} source={{ uri: favoritesSongsList[0]?.image }} />
+            <Image style={{ width: 120, height: 120, resizeMode: "cover", borderTopRightRadius: 15 }} source={{ uri: favoritesSongsList[1]?.image }} />
+            <Image style={{ width: 120, height: 120, resizeMode: "cover", borderBottomLeftRadius: 15 }} source={{ uri: favoritesSongsList[2]?.image }} />
+            <Image style={{ width: 120, height: 120, resizeMode: "cover", borderBottomRightRadius: 15 }} source={{ uri: favoritesSongsList[3]?.image }} />
+          </View>
+          <View style={{ marginBottom: 10, display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <Pressable onPress={playAll}>
+              <View style={{ borderRadius: 50, display: "flex", justifyContent: "center", alignItems: "center", width: 60, height: 60, backgroundColor: "#FFADA2" }}>
+                <FontAwesome5 style={{ margin: "auto" }} name="play" size={24} color="white" />
+              </View>
+            </Pressable>
+          </View>
+          <ScrollView style={currentMusicData ? style.songsListWhileModalVisible : style.songsList} showsVerticalScrollIndicator={false}>
+            {favoritesSongsList?.map((item, index) =>
+              <MusicCard selectedCard={()=> playSelectedMusic(item,index)} key={item?.id} image={item?.image} name={item?.name} artists={item?.artist} iconPress={() => RemoveSong(index)} />
+            )}
+          </ScrollView>
+        </View>}
     </>
   )
 }
@@ -128,8 +148,8 @@ export default function PlayListLibrary() {
 
 const style = StyleSheet.create({
   LibraryCardConatiner: {
-    display: "flex",
-    justifyContent: "center",
+    flex: 1,
+    justifyContent: "start",
     alignItems: "start",
     flexDirection: "column",
     paddingHorizontal: 30,
@@ -141,7 +161,12 @@ const style = StyleSheet.create({
     flexDirection: "row",
     marginTop: 20
   },
-  grid: {
-    flex: 4,
+  songsList: {
+    height: 350
+  }
+  ,
+  songsListWhileModalVisible: {
+    height: 350,
+    marginBottom: 80
   }
 })
