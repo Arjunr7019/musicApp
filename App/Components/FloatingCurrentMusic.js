@@ -24,7 +24,7 @@ export default function FloatingCurrentMusic() {
   const [songUrl, setSongUrl] = useState(currentMusicData?.download); // Initial song URL
   // const [currentIndex, setCurrentIndex] = useState(0);
 
-  let currentIndex = 0;
+  let Index = 0;
   const loadAndPlaySound = async (url) => {
     try {
       // Unload the current sound if it exists
@@ -129,7 +129,8 @@ export default function FloatingCurrentMusic() {
       "isPlaying": isPlaying,
       "pauseSound": pauseSound,
       "playSound": playSound,
-      "favoriteSongsFunction": favoriteSongs
+      "favoriteSongsFunction": favoriteSongs,
+      "nextMusic": nextMusic
     })
   }, [position, isPlaying])
 
@@ -142,15 +143,15 @@ export default function FloatingCurrentMusic() {
       setDuration(0);
       if (currentMusicData?.fromFavoriteList) {
         Services.getIndexValue().then(res => {
-          res ? currentIndex = res : currentIndex = 0;
+          res ? Index = res : Index = 0;
           console.log("favorite list length", favorites?.length);
           console.log(res);
-          setTimeout(()=>{
-            if (currentIndex < favorites?.length) {
-              Services.setIndexValue(currentIndex + 1);
-              console.log(currentIndex)
+          setTimeout(() => {
+            if (Index < favorites?.length) {
+              Services.setIndexValue(Index + 1);
+              console.log(Index)
               favoriteSongs()
-            }else if(currentIndex === favorites?.length){
+            } else if (Index === favorites?.length) {
               Services.setIndexValue(0);
             }
           })
@@ -160,12 +161,12 @@ export default function FloatingCurrentMusic() {
   }, [position]);
 
   const favoriteSongs = () => {
-    console.log("inSide Function", currentIndex);
+    console.log("inSide Function", Index);
     setCurrentMusicData({
-      "name": favorites[currentIndex]?.name,
-      "artist": favorites[currentIndex]?.artist,
-      "image": favorites[currentIndex]?.image,
-      "download": favorites[currentIndex]?.download,
+      "name": favorites[Index]?.name,
+      "artist": favorites[Index]?.artist,
+      "image": favorites[Index]?.image,
+      "download": favorites[Index]?.download,
       "songSelected": true,
       "fromFavoriteList": true,
     })
@@ -174,6 +175,37 @@ export default function FloatingCurrentMusic() {
     // }
   }
 
+  const nextMusic = (currentPlayingIndex) => {
+    if (currentMusicData?.fromFavoriteList) {
+      console.log("inside nextMusic Function", currentPlayingIndex);
+      console.log("favorite list length", favorites?.length);
+      Services.getIndexValue().then(res => {
+        res ? Index = res : Index = res;
+        console.log("res", res)
+        if (Index < favorites?.length) {
+          if (Index === currentPlayingIndex + 1) {
+            console.log("Index === currentPlayingIndex + 1 --->", Index);
+            sound.pauseAsync();
+            favoriteSongs();
+            Services.setIndexValue(Index + 1);
+          } else if (Index === currentPlayingIndex) {
+            Index = Index + 1;
+            console.log("Index === currentPlayingIndex ---->", Index);
+            Services.setIndexValue(Index);
+            sound.pauseAsync();
+            favoriteSongs();
+          }
+        }
+      })
+    }
+  }
+
+  const toGetIndexValue = () => {
+    Services.getIndexValue().then(res => {
+      res ? Index = res : Index = res;
+      nextMusic(Index - 1);
+    })
+  }
 
   return (
     <TouchableOpacity onPress={() => { setModalVisible(true) }} style={style.floatingPlayer}>
@@ -202,7 +234,7 @@ export default function FloatingCurrentMusic() {
             <Pressable onPress={isPlaying ? pauseSound : playSound}>
               <FontAwesome5 style={{ paddingHorizontal: 10, paddingVertical: 10 }} name={isPlaying ? "pause" : "play"} size={24} color="black" />
             </Pressable>
-            <Pressable>
+            <Pressable onPress={() => toGetIndexValue()}>
               <FontAwesome5 style={{ paddingHorizontal: 10, paddingVertical: 10 }} name="step-forward" size={24} color="black" />
             </Pressable>
           </View>
