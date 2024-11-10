@@ -1,8 +1,9 @@
-import { StyleSheet,View, Text, TextInput, FlatList, TouchableOpacity, Image, SafeAreaView, Pressable } from 'react-native'
+import { StyleSheet, View, Text, TextInput, FlatList, TouchableOpacity, Image, SafeAreaView, Pressable } from 'react-native'
 import React, { useState, useContext, useEffect } from 'react'
 import { CurrentMusic } from '../Context/CurrentMusic'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from '@expo/vector-icons/Entypo';
+import Feather from '@expo/vector-icons/Feather';
 import Services from '../Shared/Services';
 import { FavoriteMusicContext } from '../Context/FavoriteMusicContext';
 
@@ -28,7 +29,7 @@ export default function SearchArea() {
         } else {
             fetch(`https://saavn.dev/api/search/songs?query=${searchValue}'`, requestOptions)
                 .then(response => response.json())
-                .then(result => { setSearchedSongs(result.data.results)})
+                .then(result => { setSearchedSongs(result.data.results) })
                 .catch(error => console.log('error', error));
         }
     }
@@ -40,7 +41,7 @@ export default function SearchArea() {
         Services.getFavoriteMusicsList().then(res => {
             res ? setCompareSearchToFavorite(res) : setCompareSearchToFavorite();
         })
-    }, [favoriteListChanges,searchedSongs,favorites])
+    }, [favoriteListChanges, searchedSongs, favorites])
 
     const addNewSongToFavoriteList = (item, index) => {
         let song = {
@@ -59,7 +60,7 @@ export default function SearchArea() {
                     Services.setFavoriteMusicsList(updatedList);
                     setFavorites(updatedList)
                     setFavoriteListChanges("songIsRemoves");
-                }else{
+                } else {
                     let favorite = res;
                     favorite.push(song);
                     Services.setFavoriteMusicsList(favorite);
@@ -76,24 +77,24 @@ export default function SearchArea() {
     }
 
     return (
-        <View style={{ paddingTop: 50, paddingHorizontal: 20 }}>
+        <View style={{ paddingTop: 50, paddingHorizontal: 20,flex:1,justifyContent:"start", alignItems:"center" }}>
             <View style={{ width: "100%" }}>
                 <TextInput onSubmitEditing={searchMusic} style={{ height: 40, width: "100%", borderWidth: 1, borderRadius: 30, paddingHorizontal: 15 }} onChangeText={setSearchValue} value={searchValue} placeholder='Search' />
             </View>
-            <SafeAreaView style={currentMusicData ? style.searchListFloatingMusicTrue : style.searchList}>
+            {searchedSongs ? <SafeAreaView style={ currentMusicData ? style.searchListFloatingMusicTrue : style.searchList}>
                 <FlatList style={{ width: "100%" }} showsVerticalScrollIndicator={false}
                     data={searchedSongs}
                     renderItem={({ item, index }) =>
                     (<View style={{ backgroundColor: "white", marginVertical: 5, borderRadius: 6, paddingHorizontal: 10, width: "100%" }}>
                         <TouchableOpacity style={{ paddingVertical: 10, width: "100%", display: "flex", flexDirection: "row" }}
-                            onPress={() => { 
+                            onPress={() => {
                                 setCurrentMusicData({
                                     "name": item?.name,
                                     "artist": item.artists.primary[0]?.name,
                                     "image": item.image[2]?.url,
                                     "download": item.downloadUrl[2]?.url,
                                     "songSelected": true,
-                                    "fromFavoriteList":false,
+                                    "fromFavoriteList": false,
                                 })
                             }}>
                             <Image style={{ width: 50, height: 50 }} source={{ uri: item.image[2].url }} ></Image>
@@ -124,18 +125,22 @@ export default function SearchArea() {
                         </TouchableOpacity>
                     </View>)} >
                 </FlatList>
-            </SafeAreaView>
+            </SafeAreaView> :
+                <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                    <Feather name="search" size={40} color="gray" />
+                    <Text  style={{ fontSize: 30, color: "gray" }}>Search Songs..</Text>
+                </View>}
         </View>
     )
 }
 
 const style = StyleSheet.create({
-    searchList:{
+    searchList: {
         width: "100%",
-        marginBottom: 80
+        marginBottom: 40
     },
-    searchListFloatingMusicTrue:{
+    searchListFloatingMusicTrue: {
         width: "100%",
-        marginBottom: 150
+        marginBottom: 130
     }
-  })
+})

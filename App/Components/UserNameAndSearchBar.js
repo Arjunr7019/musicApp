@@ -5,7 +5,7 @@ import { AuthContext } from '../Context/AuthContext';
 export default function UserNameAndSearchBar() {
     const { userData, setUserData } = useContext(AuthContext);
 
-    const [searchValue, setSearchValue] = useState('')
+    // const [searchValue, setSearchValue] = useState('')
 
 
     return (
@@ -14,9 +14,9 @@ export default function UserNameAndSearchBar() {
                 <Text>Hello</Text>
                 <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{userData?.name}</Text>
             </View>
-            <View style={{ width: "70%" }}>
+            {/* <View style={{ width: "70%" }}>
                 <TextInput style={{ height: 40, width: "100%", borderWidth: 1, borderRadius: 30, paddingHorizontal: 15 }} onChangeText={setSearchValue} value={searchValue} placeholder='Search' />
-            </View>
+            </View> */}
         </View>
     )
 }

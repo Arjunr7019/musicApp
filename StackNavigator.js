@@ -130,15 +130,15 @@ function BottomTabs() {
                         </View>
                         <View style={{ width: "100%", display: "flex", justifyContent: "space-evenly", alignItems: "center", flexDirection: "row", }}>
                             <Pressable>
-                                <FontAwesome5 style={{ paddingHorizontal: 10 }} name="step-backward" size={30} color="black" />
+                                <FontAwesome5 style={{ paddingHorizontal: 10 }} name="step-backward" size={30} color="gray" />
                             </Pressable>
                             <Pressable onPress={musicControllerData?.isPlaying ? musicControllerData?.pauseSound : musicControllerData?.playSound}>
                                 <View style={{ display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "black", padding: 30, borderRadius: 80 }}>
                                     <FontAwesome5 name={musicControllerData?.isPlaying?"pause":"play"} size={30} color="white" />
                                 </View>
                             </Pressable>
-                            <Pressable>
-                                <FontAwesome5 style={{ paddingHorizontal: 10 }} name="step-forward" size={30} color="black" />
+                            <Pressable onPress={musicControllerData?.nextMusic}>
+                                <FontAwesome5 style={{ paddingHorizontal: 10 }} name="step-forward" size={30} color={currentMusicData?.fromFavoriteList ? "black" : "gray"} />
                             </Pressable>
                         </View>
                         <View style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection: "row", }}>

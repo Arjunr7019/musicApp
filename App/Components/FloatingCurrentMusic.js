@@ -130,7 +130,7 @@ export default function FloatingCurrentMusic() {
       "pauseSound": pauseSound,
       "playSound": playSound,
       "favoriteSongsFunction": favoriteSongs,
-      "nextMusic": nextMusic
+      "nextMusic": toGetIndexValue
     })
   }, [position, isPlaying])
 
@@ -201,10 +201,12 @@ export default function FloatingCurrentMusic() {
   }
 
   const toGetIndexValue = () => {
-    Services.getIndexValue().then(res => {
-      res ? Index = res : Index = res;
-      nextMusic(Index - 1);
-    })
+    if(currentMusicData?.fromFavoriteList){
+      Services.getIndexValue().then(res => {
+        res ? Index = res : Index = res;
+        nextMusic(Index - 1);
+      }) 
+    }
   }
 
   return (
@@ -229,13 +231,14 @@ export default function FloatingCurrentMusic() {
           </View>
           <View style={style.musicIcons}>
             <Pressable>
-              <FontAwesome5 style={{ paddingHorizontal: 10, paddingVertical: 10 }} name="step-backward" size={24} color="black" />
+              <FontAwesome5 style={{ paddingHorizontal: 10, paddingVertical: 10 }} name="step-backward" size={24} color="gray" />
             </Pressable>
             <Pressable onPress={isPlaying ? pauseSound : playSound}>
               <FontAwesome5 style={{ paddingHorizontal: 10, paddingVertical: 10 }} name={isPlaying ? "pause" : "play"} size={24} color="black" />
             </Pressable>
             <Pressable onPress={() => toGetIndexValue()}>
-              <FontAwesome5 style={{ paddingHorizontal: 10, paddingVertical: 10 }} name="step-forward" size={24} color="black" />
+              <FontAwesome5 style={{ paddingHorizontal: 10, paddingVertical: 10 }} name="step-forward" size={24} 
+              color={currentMusicData?.fromFavoriteList ? "black" : "gray"} />
             </Pressable>
           </View>
         </View>
