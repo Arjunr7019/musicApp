@@ -9,6 +9,7 @@ import { ModalPortal } from 'react-native-modals';
 import { CurrentMusic } from './App/Context/CurrentMusic';
 import { MusicController } from './App/Context/MusicController';
 import { FavoriteMusicContext } from './App/Context/FavoriteMusicContext';
+import { StatusBar } from 'expo-status-bar';
 
 export default function App() {
   const [userData, setUserData] = useState()
@@ -19,7 +20,6 @@ export default function App() {
 
   useEffect(() => {
     Services.getUserAuth().then(res => {
-      console.log(res);
       res ? setUserData(res) : setUserData(null);
     })
     Services.getFavoriteMusicsList().then(res => {
@@ -35,6 +35,7 @@ export default function App() {
             <ModalVisibility.Provider value={{ modalVisible, setModalVisible }}>
               <AuthContext.Provider value={{ userData, setUserData }}>
                 {userData ? <>
+                  <StatusBar style="dark"/>
                   <Navigation />
                   <ModalPortal />
                 </>

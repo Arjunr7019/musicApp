@@ -77,7 +77,7 @@ export default function SearchArea() {
     }
 
     return (
-        <View style={{ paddingTop: 50, paddingHorizontal: 20,flex:1,justifyContent:"start", alignItems:"center" }}>
+        <View style={{ paddingTop: 40, paddingHorizontal: 20,flex:1,justifyContent:"start", alignItems:"center" }}>
             <View style={{ width: "100%" }}>
                 <TextInput onSubmitEditing={searchMusic} style={{ height: 40, width: "100%", borderWidth: 1, borderRadius: 30, paddingHorizontal: 15 }} onChangeText={setSearchValue} value={searchValue} placeholder='Search' />
             </View>

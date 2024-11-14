@@ -34,7 +34,7 @@ export default function Home() {
                 data={songsList}
                 renderItem={({ item }) => 
                 (<View style={{ paddingHorizontal: 10 }}>
-                    <TouchableOpacity onPress={() => console.log("albumID", item.id)}>
+                    <TouchableOpacity >
                         <Image style={{ width: 150, height: 150 }} source={{ uri: item.image[2].url }} ></Image>
                         <Text style={{ width: 100, fontWeight: "bold", fontSize: 16 }}>
                             {item.name}

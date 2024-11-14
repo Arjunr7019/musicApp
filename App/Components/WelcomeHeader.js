@@ -12,7 +12,7 @@ export default function WelcomeHeader() {
     const navigation = useNavigation();
 
     return (
-        <View style={{ paddingTop: 50, paddingHorizontal: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}>
+        <View style={{ paddingTop: 40, paddingHorizontal: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}>
             <SimpleLineIcons name="menu" size={24} color="black" />
             <TouchableOpacity onPress={()=> navigation.navigate("Profile")}>
                 <View style={{ padding: 6, backgroundColor: 'black', borderRadius: 30 }}>
