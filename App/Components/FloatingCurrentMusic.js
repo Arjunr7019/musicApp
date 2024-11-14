@@ -25,22 +25,28 @@ export default function FloatingCurrentMusic() {
   // const [currentIndex, setCurrentIndex] = useState(0);
 
   let Index = 0;
+  useEffect(() => {
+    return sound
+      ? () => {
+          // Cleanup when the component unmounts or when `sound` changes
+          sound.unloadAsync();
+          stopUpdatingPosition();
+        }
+      : undefined;
+  }, [sound]);
+
   const loadAndPlaySound = async (url) => {
     try {
-      // Unload the current sound if it exists
       if (sound) {
         await sound.unloadAsync();
         stopUpdatingPosition();
       }
-
-      // Load the new sound
       const { sound: newSound } = await Audio.Sound.createAsync(
         { uri: url },
         { shouldPlay: true }
       );
       setSound(newSound);
 
-      // Set playback status update to get the total duration
       newSound.setOnPlaybackStatusUpdate((status) => {
         if (status.isLoaded) {
           setPosition(status.positionMillis);
@@ -62,7 +68,7 @@ export default function FloatingCurrentMusic() {
         setIsPlaying(true);
         startUpdatingPosition(sound);
       } else if (currentMusicData?.download) {
-        loadAndPlaySound(currentMusicData?.download);
+        await loadAndPlaySound(currentMusicData.download);
       }
     } catch (error) {
       console.error("Error playing sound:", error);
@@ -82,11 +88,13 @@ export default function FloatingCurrentMusic() {
   };
 
   const startUpdatingPosition = (soundInstance) => {
-    stopUpdatingPosition(); // Clear any previous interval
+    stopUpdatingPosition();
     const id = setInterval(async () => {
-      const status = await soundInstance.getStatusAsync();
-      if (status.isLoaded) {
-        setPosition(status.positionMillis);
+      if (soundInstance) {
+        const status = await soundInstance.getStatusAsync();
+        if (status.isLoaded) {
+          setPosition(status.positionMillis);
+        }
       }
     }, 1000);
     setIntervalId(id);
@@ -100,18 +108,9 @@ export default function FloatingCurrentMusic() {
   };
 
   useEffect(() => {
-    // Play new song whenever currentMusicData changes
     if (currentMusicData?.download) {
-      loadAndPlaySound(currentMusicData?.download);
+      loadAndPlaySound(currentMusicData.download);
     }
-
-    // Clean up the sound and interval when component unmounts or song changes
-    return () => {
-      if (sound) {
-        sound.unloadAsync();
-      }
-      stopUpdatingPosition();
-    };
   }, [currentMusicData]);
 
   const formatTime = (time) => {
