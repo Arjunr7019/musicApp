@@ -28,14 +28,20 @@ export default function FloatingCurrentMusic() {
   useEffect(() => {
     return sound
       ? () => {
-          // Cleanup when the component unmounts or when `sound` changes
-          sound.unloadAsync();
-          stopUpdatingPosition();
-        }
+        // Cleanup when the component unmounts or when `sound` changes
+        sound.unloadAsync();
+        stopUpdatingPosition();
+      }
       : undefined;
   }, [sound]);
 
   const loadAndPlaySound = async (url) => {
+    //before playing music Set audio mode for background playback
+    await Audio.setAudioModeAsync({
+      staysActiveInBackground: true,
+      playsInSilentModeIOS: true
+    });
+
     try {
       if (sound) {
         await sound.unloadAsync();
@@ -200,11 +206,11 @@ export default function FloatingCurrentMusic() {
   }
 
   const toGetIndexValue = () => {
-    if(currentMusicData?.fromFavoriteList){
+    if (currentMusicData?.fromFavoriteList) {
       Services.getIndexValue().then(res => {
         res ? Index = res : Index = res;
         nextMusic(Index - 1);
-      }) 
+      })
     }
   }
 
@@ -236,8 +242,8 @@ export default function FloatingCurrentMusic() {
               <FontAwesome5 style={{ paddingHorizontal: 10, paddingVertical: 10 }} name={isPlaying ? "pause" : "play"} size={24} color="black" />
             </Pressable>
             <Pressable onPress={() => toGetIndexValue()}>
-              <FontAwesome5 style={{ paddingHorizontal: 10, paddingVertical: 10 }} name="step-forward" size={24} 
-              color={currentMusicData?.fromFavoriteList ? "black" : "gray"} />
+              <FontAwesome5 style={{ paddingHorizontal: 10, paddingVertical: 10 }} name="step-forward" size={24}
+                color={currentMusicData?.fromFavoriteList ? "black" : "gray"} />
             </Pressable>
           </View>
         </View>
