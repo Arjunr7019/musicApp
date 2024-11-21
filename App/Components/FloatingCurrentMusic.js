@@ -39,9 +39,17 @@ export default function FloatingCurrentMusic() {
     //before playing music Set audio mode for background playback
     await Audio.setAudioModeAsync({
       staysActiveInBackground: true,
-      playsInSilentModeIOS: true
+      playsInSilentModeIOS: true,
+      shouldDuckAndroid: true
     });
 
+    // await Audio.setNowPlayingAsync({
+    //   title: currentMusicData?.name,
+    //   artist: currentMusicData?.artist,
+    //   artwork: currentMusicData?.image // Path to album art image
+    // });
+    // // Set up track metadata for lock screen
+  
     try {
       if (sound) {
         await sound.unloadAsync();
@@ -62,6 +70,14 @@ export default function FloatingCurrentMusic() {
 
       setIsPlaying(true);
       startUpdatingPosition(newSound);
+      
+      // await Audio.setNowPlayingAsync({
+      //   title: currentMusicData?.name,
+      //   artist: currentMusicData?.artist,
+      //   artwork: currentMusicData?.image // Path to album art image
+      // });
+      // // Set up track metadata for lock screen
+
     } catch (error) {
       console.error("Error loading or playing sound:", error);
     }

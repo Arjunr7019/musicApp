@@ -89,6 +89,7 @@ export default function SearchArea() {
                         <TouchableOpacity style={{ paddingVertical: 10, width: "100%", display: "flex", flexDirection: "row" }}
                             onPress={() => {
                                 setCurrentMusicData({
+                                    "id":item?.id,
                                     "name": item?.name,
                                     "artist": item.artists.primary[0]?.name,
                                     "image": item.image[2]?.url,

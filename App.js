@@ -39,7 +39,10 @@ export default function App() {
                   <Navigation />
                   <ModalPortal />
                 </>
-                  : <Login />}
+                  : <>
+                  <StatusBar style="dark"/>
+                  <Login />
+                  </>}
               </AuthContext.Provider>
             </ModalVisibility.Provider>
           </CurrentMusic.Provider>
