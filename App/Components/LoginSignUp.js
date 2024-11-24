@@ -1,33 +1,38 @@
 import { StyleSheet, TouchableOpacity, View, Text, SafeAreaView, TextInput } from 'react-native'
-import React, {useContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { AuthContext } from '../Context/AuthContext';
 import Services from '../Shared/Services';
+import Feather from '@expo/vector-icons/Feather';
 
 export default function LoginSignUp() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [login, setLogin] = useState(true);
-    const{userData,setUserData}=useContext(AuthContext);
+    const [showPassword, setShowPassword] = useState(false);
+    const { userData, setUserData } = useContext(AuthContext);
 
     const userInfo = {
-        "name":name,
-        "email":email,
-        "password":password
+        "name": name,
+        "email": email,
+        "password": password
     }
 
-    const setUserInfo = async()=>{
+    const setUserInfo = async () => {
         setUserData(userInfo);
         await Services.setUserAuth(userInfo);
     }
 
     return (
-        <View style={{ backgroundColor: 'white', borderTopRightRadius: 35, borderTopLeftRadius: 35, width:"100%" }}>
+        <View style={{ backgroundColor: 'white', borderTopRightRadius: 35, borderTopLeftRadius: 35, width: "100%" }}>
             <Text style={style.text}>{login ? "Login" : "Sign Up"}</Text>
             <SafeAreaView style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", }}>
                 {login ? <></> : <TextInput value={name} onChangeText={setName} placeholder='Name' style={style.inputForm} />}
                 <TextInput value={email} onChangeText={setEmail} placeholder='Email' style={style.inputForm} />
-                <TextInput value={password} onChangeText={setPassword} placeholder='Password' style={style.inputForm} />
+                <View style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <TextInput value={password} secureTextEntry={ showPassword?false:true} autoCorrect={false} onChangeText={setPassword} placeholder='Password' style={style.inputForm} />
+                    <Feather onPress={()=> showPassword?setShowPassword(false):setShowPassword(true)} style={{position:"absolute",right:"15%",top:"20%"}} name={showPassword?"eye":"eye-off"} size={24} color="black" />
+                </View>
                 <TouchableOpacity onPress={() => login ? setLogin(false) : setLogin(true)}>
                     <Text style={{ marginTop: 10 }}>{login ? "Don't have Account" : "Already have an Account"}</Text>
                 </TouchableOpacity>

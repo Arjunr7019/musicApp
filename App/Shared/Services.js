@@ -30,6 +30,14 @@ const getIndexValue = async()=>{
     return JSON.parse(value);
 }
 
+const setLastSession = async(value)=>{
+    await AsyncStorage.setItem('lastSession',JSON.stringify(value))
+}
+const getLastSession = async()=>{
+    const value = await AsyncStorage.getItem('lastSession');
+    return JSON.parse(value);
+}
+
 export default {
     setUserAuth,
     getUserAuth,
@@ -37,5 +45,7 @@ export default {
     setFavoriteMusicsList,
     getFavoriteMusicsList,
     setIndexValue,
-    getIndexValue
+    getIndexValue,
+    setLastSession,
+    getLastSession
 }
